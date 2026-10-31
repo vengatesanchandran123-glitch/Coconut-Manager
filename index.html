@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14532d"><meta name="description" content="Coconut business manager">
+<link rel="manifest" href="manifest.json"><title>Coconut Business Manager</title>
+<style>
+:root{--green:#14532d;--bg:#f3f7f3;--card:#fff;--ink:#17251b;--muted:#637267;--line:#dce7dd}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Tamil",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--green);color:white;padding:18px 16px 14px;position:sticky;top:0;z-index:2}header h1{font-size:20px;margin:0}header p{margin:4px 0 0;font-size:12px;opacity:.9}
+nav{display:flex;overflow:auto;background:#e5eee6;position:sticky;top:72px;z-index:2}nav button{border:0;background:none;padding:12px 14px;white-space:nowrap;color:#31513a;font-weight:600}nav button.active{background:white;color:var(--green);border-bottom:3px solid var(--green)}
+main{padding:14px;max-width:760px;margin:auto}.tab{display:none}.tab.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px #183b1c0b}.metric small{display:block;color:var(--muted)}.metric strong{font-size:22px;display:block;margin-top:5px;overflow-wrap:anywhere}
+h2{font-size:18px;margin:8px 0 12px}h3{font-size:15px;margin:0 0 10px}
+label{display:block;font-size:13px;color:#425448;margin:10px 0 5px}input,select,textarea{width:100%;padding:12px;border:1px solid #cbd9cd;border-radius:9px;background:white;font:inherit;color:var(--ink)}button.primary{background:var(--green);color:white;border:0;border-radius:10px;padding:12px 16px;font-weight:700;width:100%;margin-top:12px}button.secondary{background:#e6efe7;color:var(--green);border:0;border-radius:9px;padding:10px;font-weight:600}
+.hint{font-size:12px;color:var(--muted);line-height:1.5}.result{background:#edf6ee;border-radius:9px;padding:10px;margin-top:10px;font-size:14px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.row:last-child{border:0}.tag{font-size:11px;background:#e7f1e8;padding:3px 7px;border-radius:20px;color:#245c31}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}.danger{background:#fee9e7!important;color:#a12b20!important}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+</style></head>
+<body>
+<header><h1>🥥 Coconut Business Manager</h1><p>தேங்காய் வியாபாரக் கணக்கு • Offline personal app</p></header>
+<nav>
+<button class="active" data-tab="home">முகப்பு</button><button data-tab="purchase">கொள்முதல்</button><button data-tab="sale">விற்பனை</button><button data-tab="expense">செலவு</button><button data-tab="history">வரலாறு</button><button data-tab="backup">Backup</button>
+</nav>
+<main>
+<section id="home" class="tab active">
+<h2>வியாபார நிலவரம் / Dashboard</h2>
+<div class="grid">
+<div class="card metric"><small>கையிருப்பு / Stock</small><strong id="stock">0</strong><small>தேங்காய்கள்</small></div>
+<div class="card metric"><small>மொத்த கொள்முதல் / Purchases</small><strong id="purchases">₹0</strong></div>
+<div class="card metric"><small>மொத்த விற்பனை / Sales</small><strong id="sales">₹0</strong></div>
+<div class="card metric"><small>செலவுகள் / Expenses</small><strong id="expenses">₹0</strong></div>
+<div class="card metric"><small>மதிப்பிடப்பட்ட லாபம் / Est. Profit</small><strong id="profit">₹0</strong></div>
+<div class="card metric"><small>பதிவுகள் / Entries</small><strong id="count">0</strong></div>
+</div>
+<div class="card"><h3>வியாபார விதிகள் / Business rules</h3>
+<div class="row"><span>கொள்முதல்: 1,113 வந்தால்</span><b>1,000க்கு பணம்</b></div>
+<div class="row"><span>விற்பனை: 1,000க்கு பணம்</span><b>1,020 வழங்கவும்</b></div>
+<p class="hint">கையிருப்பில் முழு வந்த அளவும் சேர்க்கப்படும்; விற்பனையில் வாடிக்கையாளருக்கு வழங்கிய முழு அளவும் கழிக்கப்படும்.</p></div>
+</section>
+<section id="purchase" class="tab">
+<h2>கொள்முதல் / Purchase</h2><div class="card">
+<label>தேதி / Date</label><input type="date" id="pdate">
+<label>விவசாயி / Supplier</label><input id="supplier" placeholder="பெயர் / Name">
+<label>பெற்ற தேங்காய் எண்ணிக்கை / Quantity received</label><input type="number" id="pqty" min="1" inputmode="numeric" placeholder="உதா: 1113">
+<label>ஒரு கணக்கிடும் தேங்காயின் விலை / Rate per payable coconut (₹)</label><input type="number" id="prate" min="0" step=".01" inputmode="decimal" placeholder="₹">
+<div class="result" id="pcalc">கணக்கீடு இங்கே காட்டப்படும்</div><button class="primary" onclick="addPurchase()">கொள்முதல் சேமிக்கவும் / Save purchase</button>
+</div></section>
+<section id="sale" class="tab">
+<h2>விற்பனை / Sale</h2><div class="card">
+<label>தேதி / Date</label><input type="date" id="sdate">
+<label>வாடிக்கையாளர் / Customer</label><input id="customer" placeholder="பெயர் / Name">
+<label>வாடிக்கையாளர் பணம் தரும் எண்ணிக்கை / Paid quantity</label><input type="number" id="sqty" min="1" inputmode="numeric" placeholder="உதா: 1000">
+<label>ஒரு பணம் தரும் தேங்காயின் விலை / Rate per paid coconut (₹)</label><input type="number" id="srate" min="0" step=".01" inputmode="decimal" placeholder="₹">
+<div class="result" id="scalc">கணக்கீடு இங்கே காட்டப்படும்</div><button class="primary" onclick="addSale()">விற்பனை சேமிக்கவும் / Save sale</button>
+</div></section>
+<section id="expense" class="tab"><h2>செலவு / Expense</h2><div class="card">
+<label>தேதி / Date</label><input type="date" id="edate">
+<label>செலவு வகை / Category</label><select id="ecat"><option>Transport / போக்குவரத்து</option><option>Labour / கூலி</option><option>Loading / ஏற்றுதல்</option><option>Other / மற்றவை</option></select>
+<label>விவரம் / Description</label><input id="edesc" placeholder="விவரம்">
+<label>தொகை / Amount (₹)</label><input type="number" id="eamount" min="0" step=".01" inputmode="decimal">
+<button class="primary" onclick="addExpense()">செலவு சேமிக்கவும் / Save expense</button>
+</div></section>
+<section id="history" class="tab"><h2>வரலாறு / History</h2><div class="card" id="historyList">பதிவுகள் இல்லை / No entries</div></section>
+<section id="backup" class="tab"><h2>Backup & Restore</h2><div class="card"><p class="hint">உங்கள் பதிவுகள் இந்த Android browser-ல் மட்டுமே சேமிக்கப்படும். Browser data அழிந்தால் பதிவுகள் போகலாம். அடிக்கடி backup எடுக்கவும்.</p>
+<div class="actions"><button class="secondary" onclick="exportData()">Backup JSON</button><button class="secondary" onclick="exportCSV()">CSV Export</button></div>
+<label>Backup file-ஐ மீட்டமை / Restore JSON backup</label><input type="file" id="restoreFile" accept="application/json"><button class="primary" onclick="restoreData()">Restore backup</button>
+<button class="primary danger" onclick="clearData()">அனைத்து பதிவுகளையும் நீக்கு / Clear all data</button></div></section>
+<footer>இந்த app உங்கள் சாதனத்தில் உள்ளூராகவே தரவைச் சேமிக்கிறது. பிறருடன் பகிர வேண்டாம்.</footer>
+</main>
+<script>
+const KEY='coconut-manager-v1';let db=JSON.parse(localStorage.getItem(KEY)||'{"purchases":[],"sales":[],"expenses":[]}');
+const $=id=>document.getElementById(id),money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2}),num=n=>Number(n||0);
+const today=new Date().toISOString().slice(0,10);['pdate','sdate','edate'].forEach(x=>$(x).value=today);
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function purchaseCalc(q){q=Math.max(0,Math.floor(q));return Math.floor(q/1113)*1000+(q%1113)}
+function saleDelivery(q){q=Math.max(0,Math.floor(q));return Math.floor(q/1000)*1020+(q%1000)}
+function calcText(){
+ let pq=num($('pqty').value),pr=num($('prate').value),sq=num($('sqty').value),sr=num($('srate').value);
+ $('pcalc').innerHTML=`பணம் கணக்கிடும் அளவு: <b>${purchaseCalc(pq).toLocaleString('en-IN')}</b><br>கொள்முதல் தொகை: <b>${money(purchaseCalc(pq)*pr)}</b><br>கையிருப்பில் சேருவது: <b>${pq.toLocaleString('en-IN')}</b>`;
+ $('scalc').innerHTML=`வழங்க வேண்டிய அளவு: <b>${saleDelivery(sq).toLocaleString('en-IN')}</b><br>விற்பனை தொகை: <b>${money(sq*sr)}</b><br>கையிருப்பில் கழிவது: <b>${saleDelivery(sq).toLocaleString('en-IN')}</b>`;
+}
+['pqty','prate','sqty','srate'].forEach(x=>$(x).addEventListener('input',calcText));calcText();
+function addPurchase(){let q=Math.floor(num($('pqty').value)),rate=num($('prate').value);if(!q||rate<=0)return alert('எண்ணிக்கை மற்றும் விலையை சரியாக உள்ளிடவும்');let payable=purchaseCalc(q);db.purchases.push({date:$('pdate').value,name:$('supplier').value,qty:q,payable,rate,amount:payable*rate});save();$('pqty').value='';$('prate').value='';$('supplier').value='';calcText();alert('கொள்முதல் சேமிக்கப்பட்டது')}
+function addSale(){let q=Math.floor(num($('sqty').value)),rate=num($('srate').value),del=saleDelivery(q);if(!q||rate<=0)return alert('எண்ணிக்கை மற்றும் விலையை சரியாக உள்ளிடவும்');if(del>stock())return alert('கையிருப்பு போதவில்லை. தற்போதைய இருப்பு: '+stock());db.sales.push({date:$('sdate').value,name:$('customer').value,paid:q,delivered:del,rate,amount:q*rate});save();$('sqty').value='';$('srate').value='';$('customer').value='';calcText();alert('விற்பனை சேமிக்கப்பட்டது')}
+function addExpense(){let a=num($('eamount').value);if(a<=0)return alert('தொகையை உள்ளிடவும்');db.expenses.push({date:$('edate').value,category:$('ecat').value,desc:$('edesc').value,amount:a});save();$('eamount').value='';$('edesc').value='';alert('செலவு சேமிக்கப்பட்டது')}
+function stock(){return db.purchases.reduce((s,x)=>s+x.qty,0)-db.sales.reduce((s,x)=>s+x.delivered,0)}
+function costPer(){let q=db.purchases.reduce((s,x)=>s+x.qty,0),c=db.purchases.reduce((s,x)=>s+x.amount,0);return q?c/q:0}
+function render(){
+let pc=db.purchases.reduce((s,x)=>s+x.amount,0),sc=db.sales.reduce((s,x)=>s+x.amount,0),ex=db.expenses.reduce((s,x)=>s+x.amount,0),sold=db.sales.reduce((s,x)=>s+x.delivered,0);
+$('stock').textContent=stock().toLocaleString('en-IN');$('purchases').textContent=money(pc);$('sales').textContent=money(sc);$('expenses').textContent=money(ex);$('profit').textContent=money(sc-sold*costPer()-ex);$('count').textContent=db.purchases.length+db.sales.length+db.expenses.length;
+let all=[...db.purchases.map(x=>({...x,type:'கொள்முதல்',detail:`${x.qty} வந்தது; ${x.payable}க்கு பணம்`,amount:x.amount})),...db.sales.map(x=>({...x,type:'விற்பனை',detail:`${x.paid}க்கு பணம்; ${x.delivered} வழங்கியது`,amount:x.amount})),...db.expenses.map(x=>({...x,type:'செலவு',detail:x.category+' '+(x.desc||''),amount:x.amount}))].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+$('historyList').innerHTML=all.length?all.map(x=>`<div class="row"><div><b>${x.type}</b> <span class="tag">${x.date||''}</span><br>${escapeHtml(x.name||x.detail||'')}</div><b>${money(x.amount)}</b></div>`).join(''):'பதிவுகள் இல்லை / No entries';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function download(name,content,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([content],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function exportData(){download('coconut-backup.json',JSON.stringify(db,null,2),'application/json')}
+function exportCSV(){let rows=[['type','date','name','quantity','payable_or_delivered','rate','amount','description']];db.purchases.forEach(x=>rows.push(['purchase',x.date,x.name,x.qty,x.payable,x.rate,x.amount,'']));db.sales.forEach(x=>rows.push(['sale',x.date,x.name,x.paid,x.delivered,x.rate,x.amount,'']));db.expenses.forEach(x=>rows.push(['expense',x.date,'','','','',x.amount,x.category+' '+x.desc]));download('coconut-records.csv',rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv')}
+function restoreData(){let f=$('restoreFile').files[0];if(!f)return alert('Backup file தேர்வு செய்யவும்');let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!d.purchases||!d.sales||!d.expenses)throw 0;db=d;save();alert('Backup restored')}catch(e){alert('Backup file சரியாக இல்லை')}};r.readAsText(f)}
+function clearData(){if(confirm('அனைத்து பதிவுகளையும் நிரந்தரமாக நீக்கவா?')){db={purchases:[],sales:[],expenses:[]};save()}}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')});
+render();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>

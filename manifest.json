@@ -1,0 +1,9 @@
+{
+  "name": "Coconut Business Manager",
+  "short_name": "Coconut Manager",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f7f3",
+  "theme_color": "#14532d",
+  "description": "Tamil-English coconut trading accounts"
+}
