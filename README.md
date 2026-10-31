@@ -1,2 +1,2 @@
 # Coconut-Manager
-Coconut rate and changes
+Coconut buying and selling
